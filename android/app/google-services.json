@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "885536488765",
+    "project_id": "butchee-6c727",
+    "storage_bucket": "butchee-6c727.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:885536488765:android:83076736e6920624a15954",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKQuNeEfFbd3RyT5NmBk45YTghKPD1__E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
