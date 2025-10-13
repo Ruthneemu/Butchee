@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/core/constants/colors.dart';
 import 'package:myapp/core/constants/typography.dart';
+import 'package:myapp/routes/app_routes.dart';
 
 class OrderHistoryPage extends StatefulWidget {
   const OrderHistoryPage({super.key});
@@ -27,7 +28,9 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
           ),
           child: IconButton(
             icon: Icon(Icons.arrow_back, color: AppColors.textPrimary, size: 20),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.home);
+            },
             padding: EdgeInsets.zero,
           ),
         ),
@@ -157,7 +160,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                       SizedBox(height: 24),
                       ElevatedButton(
                         onPressed: () {
-                          // Shop now action
+                        Navigator.pushNamed(context, AppRoutes.home);
+
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryRed,

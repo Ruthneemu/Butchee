@@ -1,9 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/core/constants/colors.dart';
 import 'package:myapp/core/constants/typography.dart';
+import 'package:myapp/routes/app_routes.dart';
 
-class OrderDetailsPage extends StatelessWidget {
+class OrderDetailsPage extends StatefulWidget {
   const OrderDetailsPage({super.key});
+
+  @override
+  State<OrderDetailsPage> createState() => _OrderDetailsPageState();
+}
+
+class _OrderDetailsPageState extends State<OrderDetailsPage> {
+  int _selectedIndex = 2; // Orders tab selected
+
+  void _onItemTapped(int index) {
+    if (index == _selectedIndex) return; // avoid unnecessary rebuilds
+
+    setState(() => _selectedIndex = index);
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, AppRoutes.products);
+        break;
+      case 2:
+        Navigator.pushReplacementNamed(context, AppRoutes.orderHistory);
+        break;
+      case 3:
+        Navigator.pushReplacementNamed(context, AppRoutes.profile);
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +43,9 @@ class OrderDetailsPage extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, AppRoutes.home);
+          },
         ),
         title: Text(
           'Order Details',
@@ -24,11 +55,12 @@ class OrderDetailsPage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.download_outlined, color: AppColors.textSecondary),
             onPressed: () {
-              // Download action
+              // TODO: Implement download invoice action
             },
           ),
         ],
       ),
+
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -36,7 +68,7 @@ class OrderDetailsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Order Header Card
+                // ─────────────── Order Header ───────────────
                 Container(
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -56,29 +88,25 @@ class OrderDetailsPage extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Order ID #ORD12345',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
+                          Text('Order ID #ORD12345',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textSecondary,
+                              )),
                           SizedBox(height: 4),
-                          Text(
-                            'July 26, 2024',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontSize: 13,
-                              fontWeight: FontWeight.normal,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
+                          Text('July 26, 2024',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 13,
+                                color: AppColors.textSecondary,
+                              )),
                         ],
                       ),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
                           color: AppColors.freshGreen,
                           borderRadius: BorderRadius.circular(20),
@@ -98,142 +126,69 @@ class OrderDetailsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
 
-                // Order Items
+                // ─────────────── Order Items ───────────────
                 _OrderItem(
-                  image: 'assets/beef.jpg', // Placeholder
+                  image: 'assets/beef.jpg',
                   name: 'Premium Beef Tenderloin',
                   quantity: 2,
                   price: 60.00,
                 ),
                 SizedBox(height: 12),
                 _OrderItem(
-                  image: 'assets/chicken.jpg', // Placeholder
+                  image: 'assets/chicken.jpg',
                   name: 'Organic Chicken Breast',
                   quantity: 1,
                   price: 15.00,
                 ),
                 SizedBox(height: 12),
                 _OrderItem(
-                  image: 'assets/salmon.jpg', // Placeholder
+                  image: 'assets/salmon.jpg',
                   name: 'Fresh Salmon Fillet',
                   quantity: 3,
                   price: 45.00,
                 ),
                 SizedBox(height: 16),
 
-                // Delivery Information
-                Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Delivery Information',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      SizedBox(height: 12),
-                      _InfoRow(
-                        label: 'Address:',
-                        value: '123 Main St, Anytown, USA',
-                      ),
-                      SizedBox(height: 8),
-                      _InfoRow(
-                        label: 'Delivery Type:',
-                        value: 'Standard',
-                      ),
-                      SizedBox(height: 8),
-                      _InfoRow(
-                        label: 'Contact:',
-                        value: '(555) 123-4567',
-                      ),
-                    ],
-                  ),
+                // ─────────────── Delivery Information ───────────────
+                _InfoCard(
+                  title: 'Delivery Information',
+                  children: const [
+                    _InfoRow(label: 'Address:', value: '123 Main St, Anytown, USA'),
+                    SizedBox(height: 8),
+                    _InfoRow(label: 'Delivery Type:', value: 'Standard'),
+                    SizedBox(height: 8),
+                    _InfoRow(label: 'Contact:', value: '(555) 123-4567'),
+                  ],
                 ),
                 SizedBox(height: 16),
 
-                // Payment Summary
-                Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Payment Summary',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      SizedBox(height: 12),
-                      _PaymentRow(
-                        label: 'Subtotal',
-                        value: '\$120.00',
-                        isRegular: true,
-                      ),
-                      SizedBox(height: 8),
-                      _PaymentRow(
-                        label: 'Tax (8%)',
-                        value: '\$9.60',
-                        isRegular: true,
-                      ),
-                      SizedBox(height: 8),
-                      _PaymentRow(
-                        label: 'Delivery',
-                        value: '\$5.00',
-                        isRegular: true,
-                      ),
-                      SizedBox(height: 12),
-                      Divider(color: AppColors.neutralGray),
-                      SizedBox(height: 12),
-                      _PaymentRow(
-                        label: 'Total',
-                        value: '\$134.60',
-                        isRegular: false,
-                      ),
-                    ],
-                  ),
+                // ─────────────── Payment Summary ───────────────
+                _InfoCard(
+                  title: 'Payment Summary',
+                  children: const [
+                    _PaymentRow(label: 'Subtotal', value: '\$120.00', isRegular: true),
+                    SizedBox(height: 8),
+                    _PaymentRow(label: 'Tax (8%)', value: '\$9.60', isRegular: true),
+                    SizedBox(height: 8),
+                    _PaymentRow(label: 'Delivery', value: '\$5.00', isRegular: true),
+                    SizedBox(height: 12),
+                    Divider(),
+                    SizedBox(height: 12),
+                    _PaymentRow(label: 'Total', value: '\$134.60', isRegular: false),
+                  ],
                 ),
-                SizedBox(height: 80), // Space for FAB
+                SizedBox(height: 80),
               ],
             ),
           ),
-          
-          // Floating Chat Button
+
+          // ─────────────── Floating Chat Button ───────────────
           Positioned(
             bottom: 20,
             right: 20,
             child: FloatingActionButton(
               onPressed: () {
-                // Chat action
+                // TODO: Implement chat support
               },
               backgroundColor: AppColors.primaryRed,
               child: Icon(Icons.chat_bubble_outline, color: Colors.white),
@@ -241,9 +196,31 @@ class OrderDetailsPage extends StatelessWidget {
           ),
         ],
       ),
+
+      // ─────────────── Bottom Navigation ───────────────
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        selectedItemColor: AppColors.primaryRed,
+        unselectedItemColor: AppColors.textSecondary,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined), label: 'Home'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_bag_outlined), label: 'Shop'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.receipt_long_outlined), label: 'Orders'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline), label: 'Profile'),
+        ],
+      ),
     );
   }
 }
+
+// ───────────────────────────── Helper Widgets ─────────────────────────────
 
 class _OrderItem extends StatelessWidget {
   final String image;
@@ -282,48 +259,77 @@ class _OrderItem extends StatelessWidget {
               color: AppColors.lightGray,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              Icons.image_outlined,
-              color: AppColors.neutralGray,
-              size: 30,
-            ),
+            child: Icon(Icons.image_outlined,
+                color: AppColors.neutralGray, size: 30),
           ),
           SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  name,
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
+                Text(name,
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    )),
                 SizedBox(height: 4),
-                Text(
-                  'Qty: $quantity',
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 13,
-                    fontWeight: FontWeight.normal,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
+                Text('Qty: $quantity',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                    )),
               ],
             ),
           ),
-          Text(
-            '\$${price.toStringAsFixed(2)}',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+          Text('\$${price.toStringAsFixed(2)}',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              )),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoCard extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+
+  const _InfoCard({required this.title, required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: Offset(0, 2),
           ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              )),
+          SizedBox(height: 12),
+          ...children,
         ],
       ),
     );
@@ -334,36 +340,25 @@ class _InfoRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const _InfoRow({
-    required this.label,
-    required this.value,
-  });
+  const _InfoRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            value,
+        Text('$label ',
             style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 14,
-              fontWeight: FontWeight.normal,
-              color: AppColors.textSecondary,
-            ),
-          ),
+                fontFamily: 'Inter',
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary)),
+        Expanded(
+          child: Text(value,
+              style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 14,
+                  color: AppColors.textSecondary)),
         ),
       ],
     );
@@ -384,27 +379,26 @@ class _PaymentRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontFamily: isRegular ? 'Inter' : 'Poppins',
-            fontSize: isRegular ? 14 : 16,
-            fontWeight: isRegular ? FontWeight.normal : FontWeight.w600,
-            color: isRegular ? AppColors.textSecondary : AppColors.textPrimary,
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: isRegular ? 14 : 18,
-            fontWeight: FontWeight.w600,
-            color: isRegular ? AppColors.textPrimary : AppColors.primaryRed,
-          ),
-        ),
-      ],
-    );
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label,
+              style: TextStyle(
+                fontFamily: isRegular ? 'Inter' : 'Poppins',
+                fontSize: isRegular ? 14 : 16,
+                fontWeight:
+                    isRegular ? FontWeight.normal : FontWeight.w600,
+                color:
+                    isRegular ? AppColors.textSecondary : AppColors.textPrimary,
+              )),
+          Text(value,
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: isRegular ? 14 : 18,
+                fontWeight: FontWeight.w600,
+                color: isRegular
+                    ? AppColors.textPrimary
+                    : AppColors.primaryRed,
+              )),
+        ]);
   }
 }

@@ -10,6 +10,10 @@ import 'package:myapp/features/customer/presentation/pages/order_details_page.da
 import 'package:myapp/features/customer/presentation/pages/order_history_page.dart';
 import 'package:myapp/features/customer/presentation/pages/product_detail_page.dart';
 import 'package:myapp/features/customer/presentation/pages/product_list_page.dart';
+import 'package:myapp/features/customer/presentation/pages/profile_page.dart';
+import 'package:myapp/features/checkout/presentation/pages/confirmation_page.dart';
+import 'package:myapp/features/checkout/presentation/pages/delivery_page.dart';
+import 'package:myapp/features/checkout/presentation/pages/payment_page.dart';
 import 'package:myapp/routes/app_routes.dart';
 
 class RouteGenerator {
@@ -23,6 +27,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => RegisterPage());
       case AppRoutes.forgotPassword:
         return MaterialPageRoute(builder: (_) => ForgotPasswordPage());
+      case AppRoutes.profile:
+        return MaterialPageRoute(builder: (_) => ProfilePage());
 
       case AppRoutes.home:
         return MaterialPageRoute(builder: (_) => HomePage());
@@ -35,23 +41,22 @@ class RouteGenerator {
 
       case AppRoutes.checkoutAddress:
         return MaterialPageRoute(builder: (_) => MyAddressesPage());
-      // case AppRoutes.checkoutDelivery:
-      //   return MaterialPageRoute(builder: (_) => DeliveryPage());
-      // case AppRoutes.checkoutPayment:
-      //   return MaterialPageRoute(builder: (_) => PaymentPage());
-      // case AppRoutes.checkoutConfirmation:
-      //   return MaterialPageRoute(builder: (_) => ConfirmationPage());
+      case AppRoutes.checkoutDelivery:
+        return MaterialPageRoute(builder: (_) => DeliveryPage());
+      case AppRoutes.checkoutPayment:
+        return MaterialPageRoute(builder: (_) => PaymentPage());
+       case AppRoutes.checkoutConfirmation:
+         return MaterialPageRoute(builder: (_) => ConfirmationPage());
 
       case AppRoutes.orderHistory:
         return MaterialPageRoute(builder: (_) => OrderHistoryPage());
       case AppRoutes.orderDetails:
         return MaterialPageRoute(builder: (_) => OrderDetailsPage());
-      
+
       default:
         return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(child: Text('404 - Page Not Found')),
-          ),
+          builder: (_) =>
+              Scaffold(body: Center(child: Text('404 - Page Not Found'))),
         );
     }
   }

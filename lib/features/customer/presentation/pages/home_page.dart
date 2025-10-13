@@ -3,7 +3,6 @@ import 'package:myapp/core/constants/colors.dart';
 import 'package:myapp/core/constants/typography.dart';
 import 'package:myapp/routes/app_routes.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -46,13 +45,13 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
+            // 🔹 Header Section
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Logo
+                  // App Logo
                   Text(
                     'Butchee',
                     style: AppTypography.h2.copyWith(
@@ -61,7 +60,7 @@ class _HomePageState extends State<HomePage> {
                       color: AppColors.primaryRed,
                     ),
                   ),
-                  // Icons
+                  // Action Icons
                   Row(
                     children: [
                       IconButton(
@@ -75,6 +74,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       IconButton(
                         onPressed: () {
+                          Navigator.pushNamed(context, AppRoutes.support);
                         },
                         icon: Icon(
                           Icons.chat_bubble_outline,
@@ -87,13 +87,13 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            // Scrollable Content
+            // 🔹 Scrollable Body Content
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Banner
+                    // 🖼️ Banner Section
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Container(
@@ -158,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Search Bar
+                    // 🔍 Search Bar
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Container(
@@ -193,7 +193,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Categories
+                    // 🥩 Categories
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Text(
@@ -220,7 +220,8 @@ class _HomePageState extends State<HomePage> {
                                   width: 70,
                                   height: 70,
                                   decoration: BoxDecoration(
-                                    color: AppColors.primaryRed.withOpacity(0.1),
+                                    color:
+                                        AppColors.primaryRed.withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Icon(
@@ -245,7 +246,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Featured Products
+                    // ⭐ Featured Products
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Text(
@@ -258,7 +259,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 12),
 
-                    // Product List
+                    // 🛒 Product List
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -282,7 +283,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             child: Row(
                               children: [
-                                // Product Image
+                                // Product Image Placeholder
                                 Container(
                                   width: 80,
                                   height: 80,
@@ -295,7 +296,8 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   child: Icon(
                                     Icons.fastfood,
-                                    color: AppColors.primaryRed.withOpacity(0.5),
+                                    color:
+                                        AppColors.primaryRed.withOpacity(0.5),
                                     size: 40,
                                   ),
                                 ),
@@ -303,7 +305,8 @@ class _HomePageState extends State<HomePage> {
                                 // Product Info
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         product.name,
@@ -364,12 +367,30 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+
+      // 🔹 Bottom Navigation with Page Routing
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
           });
+
+          // 🧭 Handle page navigation
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, AppRoutes.home);
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, AppRoutes.products);
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(context, AppRoutes.orderHistory);
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, AppRoutes.profile);
+              break;
+          }
         },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: AppColors.primaryRed,

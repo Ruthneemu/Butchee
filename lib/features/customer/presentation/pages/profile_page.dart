@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/core/constants/colors.dart';
 import 'package:myapp/core/constants/typography.dart';
+import 'package:myapp/routes/app_routes.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -44,11 +45,10 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(
-            Icons.arrow_back,
-            color: AppColors.textPrimary,
-          ),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, AppRoutes.home);
+          },
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary),
         ),
         title: Text(
           'My Account',
@@ -83,6 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
+
             // Profile Section
             Center(
               child: Column(
@@ -107,10 +108,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           decoration: BoxDecoration(
                             color: AppColors.primaryRed,
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 2,
-                            ),
+                            border: Border.all(color: Colors.white, width: 2),
                           ),
                           child: Icon(
                             Icons.camera_alt,
@@ -142,26 +140,39 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 32),
 
-            // Menu Options
+            // ✅ Menu Options with Navigation
             _buildMenuItem(
               icon: Icons.shopping_bag_outlined,
               title: 'My Orders',
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, AppRoutes.orderHistory);
+              },
             ),
             _buildMenuItem(
               icon: Icons.location_on_outlined,
               title: 'Saved Addresses',
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, AppRoutes.checkoutAddress);
+              },
             ),
             _buildMenuItem(
               icon: Icons.credit_card_outlined,
               title: 'Payment Methods',
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, AppRoutes.checkoutPayment);
+              },
             ),
             _buildMenuItem(
               icon: Icons.logout,
               title: 'Logout',
-              onTap: () {},
+              onTap: () {
+                // ✅ Clears navigation stack and returns to login page
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.login,
+                  (route) => false,
+                );
+              },
             ),
             const SizedBox(height: 24),
 
@@ -247,7 +258,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             ],
                           ),
                         ),
-                        // Product Image
                         Container(
                           width: 60,
                           height: 60,
@@ -274,12 +284,27 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ),
+
+      // ✅ Bottom Navigation Bar with Fixed Navigation
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
+          setState(() => _selectedIndex = index);
+
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, AppRoutes.home);
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, AppRoutes.products);
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(context, AppRoutes.orderHistory);
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, AppRoutes.profile);
+              break;
+          }
         },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: AppColors.primaryRed,
@@ -288,9 +313,7 @@ class _ProfilePageState extends State<ProfilePage> {
           fontSize: 12,
           fontWeight: FontWeight.w600,
         ),
-        unselectedLabelStyle: AppTypography.caption.copyWith(
-          fontSize: 12,
-        ),
+        unselectedLabelStyle: AppTypography.caption.copyWith(fontSize: 12),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
@@ -304,10 +327,7 @@ class _ProfilePageState extends State<ProfilePage> {
             icon: Icon(Icons.receipt_long_outlined),
             label: 'Orders',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Account',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
         ],
       ),
     );
@@ -340,11 +360,7 @@ class _ProfilePageState extends State<ProfilePage> {
             color: AppColors.primaryRed.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
-            icon,
-            color: AppColors.primaryRed,
-            size: 20,
-          ),
+          child: Icon(icon, color: AppColors.primaryRed, size: 20),
         ),
         title: Text(
           title,
@@ -353,14 +369,8 @@ class _ProfilePageState extends State<ProfilePage> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        trailing: Icon(
-          Icons.chevron_right,
-          color: AppColors.textGrey,
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 4,
-        ),
+        trailing: Icon(Icons.chevron_right, color: AppColors.textGrey),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       ),
     );
   }
