@@ -11,28 +11,7 @@ class OrderDetailsPage extends StatefulWidget {
 }
 
 class _OrderDetailsPageState extends State<OrderDetailsPage> {
-  int _selectedIndex = 2; // Orders tab selected
-
-  void _onItemTapped(int index) {
-    if (index == _selectedIndex) return; // avoid unnecessary rebuilds
-
-    setState(() => _selectedIndex = index);
-
-    switch (index) {
-      case 0:
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
-        break;
-      case 1:
-        Navigator.pushReplacementNamed(context, AppRoutes.products);
-        break;
-      case 2:
-        Navigator.pushReplacementNamed(context, AppRoutes.orderHistory);
-        break;
-      case 3:
-        Navigator.pushReplacementNamed(context, AppRoutes.profile);
-        break;
-    }
-  }
+  int _selectedIndex = 2; // Orders tab selected by default
 
   @override
   Widget build(BuildContext context) {
@@ -61,159 +40,205 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         ],
       ),
 
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ─────────────── Order Header ───────────────
-                Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ─────────────── Order Header ───────────────
+            Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Order ID #ORD12345',
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.textSecondary,
-                              )),
-                          SizedBox(height: 4),
-                          Text('July 26, 2024',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 13,
-                                color: AppColors.textSecondary,
-                              )),
-                        ],
-                      ),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: AppColors.freshGreen,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          'Delivered',
+                      Text('Order ID #ORD12345',
                           style: TextStyle(
                             fontFamily: 'Poppins',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textSecondary,
+                          )),
+                      SizedBox(height: 4),
+                      Text('July 26, 2024',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
                             fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+                            color: AppColors.textSecondary,
+                          )),
                     ],
                   ),
-                ),
-                SizedBox(height: 16),
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: AppColors.freshGreen,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Delivered',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 16),
 
-                // ─────────────── Order Items ───────────────
-                _OrderItem(
-                  image: 'assets/beef.jpg',
-                  name: 'Premium Beef Tenderloin',
-                  quantity: 2,
-                  price: 60.00,
-                ),
-                SizedBox(height: 12),
-                _OrderItem(
-                  image: 'assets/chicken.jpg',
-                  name: 'Organic Chicken Breast',
-                  quantity: 1,
-                  price: 15.00,
-                ),
-                SizedBox(height: 12),
-                _OrderItem(
-                  image: 'assets/salmon.jpg',
-                  name: 'Fresh Salmon Fillet',
-                  quantity: 3,
-                  price: 45.00,
-                ),
-                SizedBox(height: 16),
+            // ─────────────── Order Items ───────────────
+            _OrderItem(
+              image: 'assets/beef.jpg',
+              name: 'Premium Beef Tenderloin',
+              quantity: 2,
+              price: 60.00,
+            ),
+            SizedBox(height: 12),
+            _OrderItem(
+              image: 'assets/chicken.jpg',
+              name: 'Organic Chicken Breast',
+              quantity: 1,
+              price: 15.00,
+            ),
+            SizedBox(height: 12),
+            _OrderItem(
+              image: 'assets/salmon.jpg',
+              name: 'Fresh Salmon Fillet',
+              quantity: 3,
+              price: 45.00,
+            ),
+            SizedBox(height: 16),
 
-                // ─────────────── Delivery Information ───────────────
-                _InfoCard(
-                  title: 'Delivery Information',
-                  children: const [
-                    _InfoRow(label: 'Address:', value: '123 Main St, Anytown, USA'),
-                    SizedBox(height: 8),
-                    _InfoRow(label: 'Delivery Type:', value: 'Standard'),
-                    SizedBox(height: 8),
-                    _InfoRow(label: 'Contact:', value: '(555) 123-4567'),
-                  ],
-                ),
-                SizedBox(height: 16),
-
-                // ─────────────── Payment Summary ───────────────
-                _InfoCard(
-                  title: 'Payment Summary',
-                  children: const [
-                    _PaymentRow(label: 'Subtotal', value: '\$120.00', isRegular: true),
-                    SizedBox(height: 8),
-                    _PaymentRow(label: 'Tax (8%)', value: '\$9.60', isRegular: true),
-                    SizedBox(height: 8),
-                    _PaymentRow(label: 'Delivery', value: '\$5.00', isRegular: true),
-                    SizedBox(height: 12),
-                    Divider(),
-                    SizedBox(height: 12),
-                    _PaymentRow(label: 'Total', value: '\$134.60', isRegular: false),
-                  ],
-                ),
-                SizedBox(height: 80),
+            // ─────────────── Delivery Information ───────────────
+            _InfoCard(
+              title: 'Delivery Information',
+              children: const [
+                _InfoRow(label: 'Address:', value: '123 Main St, Anytown, USA'),
+                SizedBox(height: 8),
+                _InfoRow(label: 'Delivery Type:', value: 'Standard'),
+                SizedBox(height: 8),
+                _InfoRow(label: 'Contact:', value: '(555) 123-4567'),
               ],
             ),
-          ),
+            SizedBox(height: 16),
 
-          // ─────────────── Floating Chat Button ───────────────
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: FloatingActionButton(
-              onPressed: () {
-                // TODO: Implement chat support
-              },
-              backgroundColor: AppColors.primaryRed,
-              child: Icon(Icons.chat_bubble_outline, color: Colors.white),
+            // ─────────────── Payment Summary ───────────────
+            _InfoCard(
+              title: 'Payment Summary',
+              children: const [
+                _PaymentRow(label: 'Subtotal', value: '\$120.00', isRegular: true),
+                SizedBox(height: 8),
+                _PaymentRow(label: 'Tax (8%)', value: '\$9.60', isRegular: true),
+                SizedBox(height: 8),
+                _PaymentRow(label: 'Delivery', value: '\$5.00', isRegular: true),
+                SizedBox(height: 12),
+                Divider(),
+                SizedBox(height: 12),
+                _PaymentRow(label: 'Total', value: '\$134.60', isRegular: false),
+              ],
             ),
-          ),
-        ],
+            SizedBox(height: 20),
+          ],
+        ),
       ),
+
+      // ─────────────── Floating Action Button ───────────────
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // TODO: Implement chat support
+        },
+        backgroundColor: AppColors.primaryRed,
+        child: Icon(Icons.chat_bubble_outline, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
       // ─────────────── Bottom Navigation ───────────────
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: AppColors.primaryRed,
-        unselectedItemColor: AppColors.textSecondary,
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        onTap: (index) {
+          // If the same tab is tapped, do nothing
+          if (index == _selectedIndex) return;
+
+          setState(() {
+            _selectedIndex = index;
+          });
+
+          // 🧭 Handle page navigation
+          switch (index) {
+            case 0:
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.home,
+                (route) => false,
+              );
+              break;
+            case 1:
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.products,
+                (route) => false,
+              );
+              break;
+            case 2:
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.orderHistory,
+                (route) => false,
+              );
+              break;
+            case 3:
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.profile,
+                (route) => false,
+              );
+              break;
+          }
+        },
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: AppColors.primaryRed,
+        unselectedItemColor: AppColors.textGrey,
+        selectedLabelStyle: AppTypography.caption.copyWith(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: AppTypography.caption.copyWith(
+          fontSize: 12,
+        ),
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined), label: 'Home'),
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag_outlined), label: 'Shop'),
+            icon: Icon(Icons.shopping_bag_outlined),
+            label: 'Shop',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.receipt_long_outlined), label: 'Orders'),
+            icon: Icon(Icons.receipt_long),
+            label: 'Orders',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline), label: 'Profile'),
+            icon: Icon(Icons.person_outline),
+            label: 'Account',
+          ),
         ],
       ),
     );

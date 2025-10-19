@@ -1,20 +1,81 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/core/constants/colors.dart';
 import 'package:myapp/core/constants/typography.dart';
+import 'package:myapp/core/services/auth_service.dart';
 import 'package:myapp/routes/app_routes.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-
-
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
-  Future<void> _launchUrl(String urlString) async {
-    final Uri url = Uri.parse(urlString);
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      throw Exception('Could not launch $urlString');
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final AuthService _authService = AuthService();
+  
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  
+  bool _isLoading = false;
+  bool _obscurePassword = true;
+  String? _errorMessage;
+
+  Future<void> _signInWithEmailPassword() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please enter email and password';
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await _authService.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+      
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
+
+  // Future<void> _signInWithGoogle() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //     _errorMessage = null;
+  //   });
+
+  //   try {
+  //     await _authService.signInWithGoogle();
+      
+  //     if (mounted) {
+  //       Navigator.pushReplacementNamed(context, AppRoutes.home);
+  //     }
+  //   } catch (e) {
+  //     setState(() {
+  //       _errorMessage = e.toString();
+  //     });
+  //   } finally {
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +100,25 @@ class LoginPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 60),
 
+                // Error Message
+                if (_errorMessage != null)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.red.shade200),
+                    ),
+                    child: Text(
+                      _errorMessage!,
+                      style: TextStyle(
+                        color: Colors.red.shade800,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+
                 // Email/Phone Input
                 Container(
                   decoration: BoxDecoration(
@@ -46,6 +126,8 @@ class LoginPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TextField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       labelText: 'Email / Phone',
                       labelStyle: AppTypography.caption.copyWith(
@@ -74,7 +156,8 @@ class LoginPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TextField(
-                    obscureText: true,
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       labelText: 'Password',
                       labelStyle: AppTypography.caption.copyWith(
@@ -91,6 +174,17 @@ class LoginPage extends StatelessWidget {
                         horizontal: 16,
                         vertical: 16,
                       ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                          color: AppColors.textGrey,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
                     ),
                   ),
                 ),
@@ -100,9 +194,7 @@ class LoginPage extends StatelessWidget {
                 SizedBox(
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.home);
-                    },
+                    onPressed: _isLoading ? null : _signInWithEmailPassword,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryRed,
                       foregroundColor: Colors.white,
@@ -111,10 +203,19 @@ class LoginPage extends StatelessWidget {
                       ),
                       elevation: 0,
                     ),
-                    child: Text(
-                      'Login',
-                      style: AppTypography.button.copyWith(fontSize: 16),
-                    ),
+                    child: _isLoading
+                        ? SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            'Login',
+                            style: AppTypography.button.copyWith(fontSize: 16),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -123,8 +224,6 @@ class LoginPage extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, AppRoutes.forgotPassword);
-
-
                   },
                   child: Text(
                     'Forgot Password?',
@@ -179,8 +278,10 @@ class LoginPage extends StatelessWidget {
                       ),
                       child: IconButton(
                         onPressed: () {
-                          // Replace with your actual Apple Sign In URL or account
-                          _launchUrl('https://appleid.apple.com/');
+                          // TODO: Implement Apple Sign In
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Apple Sign In coming soon!')),
+                          );
                         },
                         icon: Icon(
                           Icons.apple,
@@ -198,20 +299,26 @@ class LoginPage extends StatelessWidget {
                         color: AppColors.lightGray.withOpacity(0.6),
                         shape: BoxShape.circle,
                       ),
-                      child: IconButton(
-                        onPressed: () {
-                          // Replace with your actual Google account URL
-                          _launchUrl('https://accounts.google.com/');
-                        },
-                        icon: Text(
-                          'G',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primaryRed.withOpacity(0.7),
-                          ),
-                        ),
-                      ),
+                      // child: IconButton(
+                      //   onPressed: _isLoading ? null : _signInWithGoogle,
+                      //   icon: _isLoading
+                      //       ? SizedBox(
+                      //           height: 20,
+                      //           width: 20,
+                      //           child: CircularProgressIndicator(
+                      //             strokeWidth: 2,
+                      //             color: AppColors.primaryRed,
+                      //           ),
+                      //         )
+                      //       : Text(
+                      //           'G',
+                      //           style: TextStyle(
+                      //             fontSize: 24,
+                      //             fontWeight: FontWeight.bold,
+                      //             color: AppColors.primaryRed.withOpacity(0.7),
+                      //           ),
+                      //         ),
+                      // ),
                     ),
                     const SizedBox(width: 24),
                     // Phone Login
@@ -224,8 +331,10 @@ class LoginPage extends StatelessWidget {
                       ),
                       child: IconButton(
                         onPressed: () {
-                          // Replace with your actual phone auth URL or functionality
-                          _launchUrl('tel:');
+                          // TODO: Implement Phone Authentication
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Phone Authentication coming soon!')),
+                          );
                         },
                         icon: Icon(
                           Icons.phone,
@@ -241,8 +350,7 @@ class LoginPage extends StatelessWidget {
                 // Create Account
                 TextButton(
                   onPressed: () {
-                   Navigator.pushNamed(context, AppRoutes.register);
-
+                    Navigator.pushNamed(context, AppRoutes.register);
                   },
                   child: Text(
                     'Create Account',
