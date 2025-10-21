@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/core/constants/colors.dart';
 import 'package:myapp/core/constants/typography.dart';
 import 'package:myapp/routes/app_routes.dart';
-
+import 'package:myapp/features/customer/presentation/widgets/bottom_navigation.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -11,11 +11,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
   String _searchQuery = '';
   String _selectedCategory = 'All';
   final TextEditingController _searchController = TextEditingController();
-  
+
   // Cart items count
   int _cartItemsCount = 0;
 
@@ -100,7 +99,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _cartItemsCount++;
     });
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -493,7 +492,7 @@ class _HomePageState extends State<HomePage> {
                         itemBuilder: (context, index) {
                           final category = _categories[index];
                           final isSelected = _selectedCategory == category.name;
-                          
+
                           return Padding(
                             padding: const EdgeInsets.only(right: 12),
                             child: GestureDetector(
@@ -701,61 +700,9 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-
-      // 🔹 Bottom Navigation with Page Routing
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          if (index == _selectedIndex) return;
-
-          setState(() {
-            _selectedIndex = index;
-          });
-
-          // 🧭 Handle page navigation
-          switch (index) {
-            case 0:
-              // Already on home, do nothing
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, AppRoutes.products);
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, AppRoutes.orderHistory);
-              break;
-            case 3:
-              Navigator.pushReplacementNamed(context, AppRoutes.profile);
-              break;
-          }
-        },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primaryRed,
-        unselectedItemColor: AppColors.textGrey,
-        selectedLabelStyle: AppTypography.caption.copyWith(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: AppTypography.caption.copyWith(
-          fontSize: 12,
-        ),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag_outlined),
-            label: 'Shop',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long),
-            label: 'Orders',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Account',
-          ),
-        ],
+      // 🔹 Reusable Bottom Navigation Bar
+      bottomNavigationBar: const CustomBottomNavBar(
+        currentIndex: 0, // Home page index
       ),
     );
   }
