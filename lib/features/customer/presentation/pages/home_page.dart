@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myapp/core/constants/colors.dart';
 import 'package:myapp/core/constants/typography.dart';
+import 'package:myapp/data/services/product_seed_service.dart';
 import 'package:myapp/features/customer/bloc/cart/cart_bloc.dart';
 import 'package:myapp/features/customer/bloc/cart/cart_event.dart';
 import 'package:myapp/features/customer/bloc/cart/cart_state.dart';
@@ -1245,9 +1246,47 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         bottomNavigationBar: const CustomBottomNavBar(
           currentIndex: 0,
         ),
+         floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          try {
+            // Show loading
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('🌱 Seeding products...'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+            
+            // Import at the top: import 'package:myapp/data/seed_products.dart';
+            await ProductSeeder.seedProducts();
+            
+            // Reload products
+            context.read<ProductBloc>().add(LoadProducts());
+            
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('✅ Products seeded successfully!'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
+            );
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('❌ Error: $e'),
+                backgroundColor: Colors.red,
+                duration: Duration(seconds: 3),
+              ),
+            );
+          }
+        },
+        label: const Text('Seed Products'),
+        icon: const Icon(Icons.upload),
+        backgroundColor: AppColors.primaryRed,
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 // Data Models
