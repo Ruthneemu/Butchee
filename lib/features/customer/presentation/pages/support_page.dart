@@ -6,14 +6,14 @@ import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'dart:async';
 
-class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+class SupportPage extends StatefulWidget {
+  const SupportPage({super.key});
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<SupportPage> createState() => _SupportPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _SupportPageState extends State<SupportPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final ImagePicker _picker = ImagePicker();

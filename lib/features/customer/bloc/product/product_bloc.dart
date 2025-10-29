@@ -1,11 +1,13 @@
-// lib/features/customer/presentation/bloc/product/product_bloc.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myapp/features/customer/bloc/product/product.dart';
-import 'package:myapp/features/customer/bloc/product/product_event.dart';
-import 'package:myapp/features/customer/bloc/product/product_state.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myapp/data/models/product_model.dart';
+import 'package:myapp/features/customer/domain/entities/product.dart';
+import 'product_event.dart';
+import 'product_state.dart';
 
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
+  final CollectionReference _productsRef = FirebaseFirestore.instance.collection('products');
+
   ProductBloc() : super(const ProductState()) {
     on<LoadProducts>(_onLoadProducts);
     on<SearchProducts>(_onSearchProducts);
@@ -13,16 +15,43 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<SortProducts>(_onSortProducts);
     on<ToggleFavorite>(_onToggleFavorite);
     on<RefreshProducts>(_onRefreshProducts);
+    on<GetProductById>(_onGetProductById);
   }
 
   void _onLoadProducts(LoadProducts event, Emitter<ProductState> emit) async {
     emit(state.copyWith(status: ProductStatus.loading));
 
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(milliseconds: 800));
+      final QuerySnapshot snapshot = await _productsRef.get();
       
-      final products = _getMockProducts();
+      if (snapshot.docs.isEmpty) {
+        print('⚠️ No products found in Firestore. Please seed the database.');
+        emit(state.copyWith(
+          status: ProductStatus.loaded,
+          allProducts: [],
+          filteredProducts: [],
+          errorMessage: 'No products available. Please seed the database.',
+        ));
+        return;
+      }
+
+      final List<Product> products = [];
+      
+      for (var doc in snapshot.docs) {
+        try {
+          final data = doc.data() as Map<String, dynamic>;
+          print('Loading product: ${data['name']}');
+          
+          final productModel = ProductModel.fromJson(data);
+          products.add(_convertToProduct(productModel));
+        } catch (e) {
+          print('❌ Error parsing product ${doc.id}: $e');
+          // Continue loading other products
+          continue;
+        }
+      }
+      
+      print('✅ Successfully loaded ${products.length} products');
       
       emit(state.copyWith(
         status: ProductStatus.loaded,
@@ -30,9 +59,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         filteredProducts: products,
       ));
     } catch (e) {
+      print('❌ Error loading products: $e');
       emit(state.copyWith(
         status: ProductStatus.error,
-        errorMessage: e.toString(),
+        errorMessage: 'Failed to load products: ${e.toString()}',
       ));
     }
   }
@@ -99,11 +129,19 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     RefreshProducts event,
     Emitter<ProductState> emit,
   ) async {
-    emit(state.copyWith(status: ProductStatus.loading));
-
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
-      final products = _getMockProducts();
+      final QuerySnapshot snapshot = await _productsRef.get();
+      final List<Product> products = [];
+      
+      for (var doc in snapshot.docs) {
+        try {
+          final productModel = ProductModel.fromJson(doc.data() as Map<String, dynamic>);
+          products.add(_convertToProduct(productModel));
+        } catch (e) {
+          print('Error parsing product during refresh: $e');
+          continue;
+        }
+      }
       
       final filtered = _filterAndSortProducts(
         products,
@@ -117,6 +155,25 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         allProducts: products,
         filteredProducts: filtered,
       ));
+    } catch (e) {
+      print('Error refreshing products: $e');
+      emit(state.copyWith(
+        status: ProductStatus.error,
+        errorMessage: e.toString(),
+      ));
+    }
+  }
+
+  void _onGetProductById(GetProductById event, Emitter<ProductState> emit) async {
+    try {
+      final DocumentSnapshot doc = await _productsRef.doc(event.productId).get();
+      
+      if (doc.exists) {
+        final productModel = ProductModel.fromJson(doc.data() as Map<String, dynamic>);
+        final product = _convertToProduct(productModel);
+        
+        emit(state.copyWith(selectedProduct: product));
+      }
     } catch (e) {
       emit(state.copyWith(
         status: ProductStatus.error,
@@ -158,93 +215,21 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     return filtered;
   }
 
-  List<Product> _getMockProducts() {
-    return [
-      Product(
-        id: '1',
-        name: 'Prime Ribeye Steak',
-        price: 28.99,
-        image: 'ribeye',
-        category: 'Beef',
-        description: 'Premium quality ribeye steak with perfect marbling',
-        rating: 4.8,
-        reviews: 124,
-        weight: '1 lb',
-        inStock: true,
-      ),
-      Product(
-        id: '2',
-        name: 'Boneless Goat Leg',
-        price: 18.90,
-        image: 'goat',
-        category: 'Goat',
-        description: 'Fresh boneless goat leg, perfect for slow cooking',
-        rating: 4.6,
-        reviews: 89,
-        weight: '2 lb',
-        inStock: true,
-      ),
-      Product(
-        id: '3',
-        name: 'Free-Range Chicken',
-        price: 12.75,
-        image: 'chicken',
-        category: 'Chicken',
-        description: 'Organic free-range chicken, hormone-free',
-        rating: 4.9,
-        reviews: 203,
-        weight: '3 lb',
-        inStock: true,
-      ),
-      Product(
-        id: '4',
-        name: 'T-Bone Steak',
-        price: 32.99,
-        image: 'tbone',
-        category: 'Beef',
-        description: 'Premium T-bone steak with tenderloin',
-        rating: 4.7,
-        reviews: 156,
-        weight: '1.5 lb',
-        inStock: true,
-      ),
-      Product(
-        id: '5',
-        name: 'Chicken Wings',
-        price: 8.99,
-        image: 'wings',
-        category: 'Chicken',
-        description: 'Fresh chicken wings, perfect for grilling',
-        rating: 4.5,
-        reviews: 178,
-        weight: '2 lb',
-        inStock: false,
-      ),
-      Product(
-        id: '6',
-        name: 'Salmon Fillet',
-        price: 24.99,
-        image: 'salmon',
-        category: 'Seafood',
-        description: 'Fresh Atlantic salmon, wild-caught',
-        rating: 4.9,
-        reviews: 267,
-        weight: '1 lb',
-        inStock: true,
-      ),
-      Product(
-        id: '7',
-        name: 'Goat Chops',
-        price: 22.50,
-        image: 'goat_chops',
-        category: 'Goat',
-        description: 'Tender goat chops, expertly cut',
-        rating: 4.7,
-        reviews: 92,
-        weight: '1.5 lb',
-        inStock: true,
-      ),
-    ];
+  Product _convertToProduct(ProductModel model) {
+    return Product(
+      id: model.id,
+      name: model.name,
+      price: model.price,
+      imageUrl: model.imageUrl.isNotEmpty ? model.imageUrl : null,
+      category: model.categoryId,
+      description: model.description,
+      rating: 4.5,
+      reviews: 24,
+      weight: model.weightDisplay,
+      inStock: model.isAvailable,
+      options: model.options,
+      allowHalf: model.allowHalf,
+      unit: model.unit,
+    );
   }
 }
-

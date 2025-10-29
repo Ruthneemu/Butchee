@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:myapp/features/customer/bloc/product/product.dart';
+import 'package:myapp/features/customer/domain/entities/product.dart';
 
 abstract class CartEvent extends Equatable {
   const CartEvent();
@@ -12,12 +12,27 @@ class LoadCart extends CartEvent {}
 
 class AddToCart extends CartEvent {
   final Product product;
-  final int quantity;
+  final double quantity;  // Changed from int to double
 
-  const AddToCart({required this.product, this.quantity = 1});
+  const AddToCart({required this.product, this.quantity = 1.0});
 
   @override
   List<Object?> get props => [product, quantity];
+}
+
+class AddToCartWithOptions extends CartEvent {
+  final Product product;
+  final Map<String, dynamic> selectedOptions;
+  final double quantity;  // Changed from int to double
+
+  const AddToCartWithOptions({
+    required this.product,
+    required this.selectedOptions,
+    this.quantity = 1.0,
+  });
+
+  @override
+  List<Object?> get props => [product, selectedOptions, quantity];
 }
 
 class RemoveFromCart extends CartEvent {
@@ -31,7 +46,7 @@ class RemoveFromCart extends CartEvent {
 
 class UpdateCartItemQuantity extends CartEvent {
   final String productId;
-  final int quantity;
+  final double quantity;  // Changed from int to double
 
   const UpdateCartItemQuantity({
     required this.productId,

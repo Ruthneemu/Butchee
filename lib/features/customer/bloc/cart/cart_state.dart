@@ -24,7 +24,7 @@ class CartState extends Equatable {
     this.errorMessage,
   });
 
-  int get itemCount => items.fold(0, (sum, item) => sum + item.quantity);
+  int get itemCount => items.fold(0, (sum, item) => sum + item.quantity.round());  // Round to get whole number for display
 
   bool get isEmpty => items.isEmpty;
 

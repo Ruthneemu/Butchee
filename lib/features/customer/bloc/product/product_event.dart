@@ -46,3 +46,12 @@ class ToggleFavorite extends ProductEvent {
 }
 
 class RefreshProducts extends ProductEvent {}
+
+class GetProductById extends ProductEvent {
+  final String productId;
+
+  const GetProductById(this.productId);
+
+  @override
+  List<Object?> get props => [productId];
+}

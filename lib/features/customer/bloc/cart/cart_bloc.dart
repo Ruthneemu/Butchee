@@ -1,4 +1,3 @@
-// lib/features/customer/presentation/bloc/cart/cart_bloc.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myapp/features/customer/domain/entities/cart_item.dart';
 import 'cart_event.dart';
@@ -8,6 +7,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   CartBloc() : super(const CartState()) {
     on<LoadCart>(_onLoadCart);
     on<AddToCart>(_onAddToCart);
+    on<AddToCartWithOptions>(_onAddToCartWithOptions);
     on<RemoveFromCart>(_onRemoveFromCart);
     on<UpdateCartItemQuantity>(_onUpdateCartItemQuantity);
     on<ClearCart>(_onClearCart);
@@ -45,6 +45,30 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       items.add(CartItem(
         product: event.product,
         quantity: event.quantity,
+      ));
+    }
+
+    _recalculateCart(emit, items);
+  }
+
+  void _onAddToCartWithOptions(AddToCartWithOptions event, Emitter<CartState> emit) {
+    final items = List<CartItem>.from(state.items);
+    
+    final existingIndex = items.indexWhere(
+      (item) => 
+          item.product.id == event.product.id && 
+          _mapEquals(item.selectedOptions, event.selectedOptions),
+    );
+
+    if (existingIndex >= 0) {
+      items[existingIndex] = items[existingIndex].copyWith(
+        quantity: items[existingIndex].quantity + event.quantity,
+      );
+    } else {
+      items.add(CartItem(
+        product: event.product,
+        quantity: event.quantity,
+        selectedOptions: event.selectedOptions,
       ));
     }
 
@@ -146,6 +170,16 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       clearErrorMessage: true,
     ));
   }
+
+  bool _mapEquals(Map<String, dynamic> map1, Map<String, dynamic> map2) {
+    if (map1.length != map2.length) return false;
+    
+    for (final key in map1.keys) {
+      if (!map2.containsKey(key) || map1[key] != map2[key]) {
+        return false;
+      }
+    }
+    
+    return true;
+  }
 }
-
-

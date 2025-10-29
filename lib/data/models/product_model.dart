@@ -11,6 +11,11 @@ class ProductModel {
   final int stockQuantity;
   final DateTime createdAt;
   final DateTime updatedAt;
+  // New fields for meat products
+  final Map<String, dynamic>? options;
+  final bool allowHalf;
+  final String unit;
+  final String? weightDisplay;
 
   ProductModel({
     required this.id,
@@ -23,6 +28,10 @@ class ProductModel {
     this.stockQuantity = 0,
     required this.createdAt,
     required this.updatedAt,
+    this.options,
+    this.allowHalf = false,
+    this.unit = 'kg',
+    this.weightDisplay,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -45,6 +54,10 @@ class ProductModel {
               ? (json['updatedAt'] as Timestamp).toDate() 
               : DateTime.parse(json['updatedAt']))
           : DateTime.now(),
+      options: json['options'],
+      allowHalf: json['allowHalf'] ?? false,
+      unit: json['unit'] ?? 'kg',
+      weightDisplay: json['weightDisplay'],
     );
   }
 
@@ -60,6 +73,10 @@ class ProductModel {
       'stockQuantity': stockQuantity,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
+      'options': options,
+      'allowHalf': allowHalf,
+      'unit': unit,
+      'weightDisplay': weightDisplay,
     };
   }
 
@@ -74,6 +91,10 @@ class ProductModel {
     int? stockQuantity,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Map<String, dynamic>? options,
+    bool? allowHalf,
+    String? unit,
+    String? weightDisplay,
   }) {
     return ProductModel(
       id: id ?? this.id,
@@ -86,6 +107,10 @@ class ProductModel {
       stockQuantity: stockQuantity ?? this.stockQuantity,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      options: options ?? this.options,
+      allowHalf: allowHalf ?? this.allowHalf,
+      unit: unit ?? this.unit,
+      weightDisplay: weightDisplay ?? this.weightDisplay,
     );
   }
 }

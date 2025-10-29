@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/core/constants/colors.dart';
 import 'package:myapp/core/constants/typography.dart';
+import 'package:myapp/routes/app_routes.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -131,7 +132,7 @@ class _CartPageState extends State<CartPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.pushNamed(context, AppRoutes.checkout);
                 // Navigate to checkout page
               },
               style: ElevatedButton.styleFrom(

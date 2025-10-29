@@ -1,25 +1,29 @@
+// lib/features/customer/bloc/product/product_state.dart
 import 'package:equatable/equatable.dart';
-import 'package:myapp/features/customer/bloc/product/product.dart';
+import 'package:myapp/features/customer/domain/entities/product.dart';
+
 enum ProductStatus { initial, loading, loaded, error }
 
 class ProductState extends Equatable {
   final ProductStatus status;
   final List<Product> allProducts;
   final List<Product> filteredProducts;
-  final List<String> favorites;
-  final String selectedCategory;
   final String searchQuery;
+  final String selectedCategory;
   final String sortBy;
+  final List<String> favorites;
+  final Product? selectedProduct;
   final String? errorMessage;
 
   const ProductState({
     this.status = ProductStatus.initial,
     this.allProducts = const [],
     this.filteredProducts = const [],
-    this.favorites = const [],
-    this.selectedCategory = 'All',
     this.searchQuery = '',
+    this.selectedCategory = 'All',
     this.sortBy = 'featured',
+    this.favorites = const [],
+    this.selectedProduct,
     this.errorMessage,
   });
 
@@ -27,20 +31,22 @@ class ProductState extends Equatable {
     ProductStatus? status,
     List<Product>? allProducts,
     List<Product>? filteredProducts,
-    List<String>? favorites,
-    String? selectedCategory,
     String? searchQuery,
+    String? selectedCategory,
     String? sortBy,
+    List<String>? favorites,
+    Product? selectedProduct,
     String? errorMessage,
   }) {
     return ProductState(
       status: status ?? this.status,
       allProducts: allProducts ?? this.allProducts,
       filteredProducts: filteredProducts ?? this.filteredProducts,
-      favorites: favorites ?? this.favorites,
-      selectedCategory: selectedCategory ?? this.selectedCategory,
       searchQuery: searchQuery ?? this.searchQuery,
+      selectedCategory: selectedCategory ?? this.selectedCategory,
       sortBy: sortBy ?? this.sortBy,
+      favorites: favorites ?? this.favorites,
+      selectedProduct: selectedProduct ?? this.selectedProduct,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
@@ -50,10 +56,11 @@ class ProductState extends Equatable {
         status,
         allProducts,
         filteredProducts,
-        favorites,
-        selectedCategory,
         searchQuery,
+        selectedCategory,
         sortBy,
+        favorites,
+        selectedProduct,
         errorMessage,
       ];
 }

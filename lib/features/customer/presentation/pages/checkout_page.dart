@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/core/constants/colors.dart';
 import 'package:myapp/core/constants/typography.dart';
+import 'package:myapp/routes/app_routes.dart';
 
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({super.key});
@@ -100,7 +101,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, AppRoutes.checkoutAddress);
                 _addNewAddress();
               },
               icon: const Icon(Icons.add),
@@ -721,7 +722,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close dialog
-              Navigator.of(context).popUntil((route) => route.isFirst); // Go to home
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryRed,
