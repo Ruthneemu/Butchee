@@ -1,4 +1,3 @@
-// lib/features/customer/bloc/product/product_state.dart
 import 'package:equatable/equatable.dart';
 import 'package:myapp/features/customer/domain/entities/product.dart';
 

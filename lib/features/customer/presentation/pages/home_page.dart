@@ -1245,9 +1245,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         bottomNavigationBar: const CustomBottomNavBar(
           currentIndex: 0,
         ),
-      ),
-    );
-  }
+    ),
+  );
+}
 }
 
 // Data Models

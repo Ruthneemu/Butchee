@@ -46,7 +46,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           products.add(_convertToProduct(productModel));
         } catch (e) {
           print('❌ Error parsing product ${doc.id}: $e');
-          // Continue loading other products
           continue;
         }
       }
@@ -196,7 +195,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       return matchesSearch && matchesCategory;
     }).toList();
 
-    // Apply sorting
     switch (sortBy) {
       case 'price_low':
         filtered.sort((a, b) => a.price.compareTo(b.price));
