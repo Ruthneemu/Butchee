@@ -11,11 +11,10 @@ class ProductModel {
   final int stockQuantity;
   final DateTime createdAt;
   final DateTime updatedAt;
-  // New fields for meat products
-  final Map<String, dynamic>? options;
+  final List<String> options;
   final bool allowHalf;
   final String unit;
-  final String? weightDisplay;
+  final String weightDisplay;
 
   ProductModel({
     required this.id,
@@ -28,10 +27,10 @@ class ProductModel {
     this.stockQuantity = 0,
     required this.createdAt,
     required this.updatedAt,
-    this.options,
+    this.options = const [],
     this.allowHalf = false,
     this.unit = 'kg',
-    this.weightDisplay,
+    this.weightDisplay = '1 kg',
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -54,11 +53,19 @@ class ProductModel {
               ? (json['updatedAt'] as Timestamp).toDate() 
               : DateTime.parse(json['updatedAt']))
           : DateTime.now(),
-      options: json['options'],
+      options: _parseOptions(json['options']),
       allowHalf: json['allowHalf'] ?? false,
       unit: json['unit'] ?? 'kg',
-      weightDisplay: json['weightDisplay'],
+      weightDisplay: json['weightDisplay'] ?? '1 kg',
     );
+  }
+
+  static List<String> _parseOptions(dynamic value) {
+    if (value == null) return [];
+    if (value is List) {
+      return value.map((item) => item.toString()).toList();
+    }
+    return [];
   }
 
   Map<String, dynamic> toJson() {
@@ -71,8 +78,8 @@ class ProductModel {
       'categoryId': categoryId,
       'isAvailable': isAvailable,
       'stockQuantity': stockQuantity,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(updatedAt),
       'options': options,
       'allowHalf': allowHalf,
       'unit': unit,
@@ -91,7 +98,7 @@ class ProductModel {
     int? stockQuantity,
     DateTime? createdAt,
     DateTime? updatedAt,
-    Map<String, dynamic>? options,
+    List<String>? options,
     bool? allowHalf,
     String? unit,
     String? weightDisplay,
