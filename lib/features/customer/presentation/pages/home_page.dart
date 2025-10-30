@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myapp/core/constants/colors.dart';
 import 'package:myapp/core/constants/typography.dart';
-import 'package:myapp/data/services/product_seed_service.dart';
 import 'package:myapp/features/customer/bloc/cart/cart_bloc.dart';
 import 'package:myapp/features/customer/bloc/cart/cart_event.dart';
 import 'package:myapp/features/customer/bloc/cart/cart_state.dart';
